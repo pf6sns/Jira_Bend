@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routes import jira_route
+from routes import jira_route, jira_data_routes
 from contextlib import asynccontextmanager
 import asyncio
 from services import jira_service
@@ -22,8 +22,7 @@ async def poll_jira_updates():
                     summary = fields.get("summary", "")
                     
                     await jira_controller.process_issue_update(key, status, summary)
-            else:
-                print("No recent updates found.")
+            # Silence log when no updates found to reduce clutter
                 
         except Exception as e:
             print(f"Error in polling loop: {e}")
@@ -40,7 +39,19 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Jira Auto Task Assigner", lifespan=lifespan)
 
+# Add CORS middleware to allow frontend requests
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://localhost:3001"],  # Frontend URLs
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(jira_route.router)
+app.include_router(jira_data_routes.router)
 
 @app.get("/health")
 async def health_check():

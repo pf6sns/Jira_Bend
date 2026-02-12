@@ -64,3 +64,18 @@ async def assign_task_by_account(issue_id, account_id):
         res = await client.put(url, headers=HEADERS, auth=AUTH, json=payload)
         res.raise_for_status()
         return res.json() if res.text else {}
+
+async def get_issue_transitions(issue_key):
+    async with httpx.AsyncClient() as client:
+        url = f"{BASE_URL}/rest/api/3/issue/{issue_key}/transitions"
+        res = await client.get(url, headers=HEADERS, auth=AUTH)
+        res.raise_for_status()
+        return res.json()
+
+async def do_issue_transition(issue_key, transition_id):
+    async with httpx.AsyncClient() as client:
+        url = f"{BASE_URL}/rest/api/3/issue/{issue_key}/transitions"
+        payload = {"transition": {"id": transition_id}}
+        res = await client.post(url, headers=HEADERS, auth=AUTH, json=payload)
+        res.raise_for_status()
+        return res.json() if res.text else {"success": True}

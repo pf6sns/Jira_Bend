@@ -25,14 +25,14 @@ async def check_jira_updates():
         "Authorization": f"Basic {base64_auth}"
     }
     
-    # JQL to find issues updated in the last 1 hour
-    jql = "updated >= -1h ORDER BY updated DESC"
+    # JQL to find all issues in project 'MA'
+    jql = "project = 'MA' ORDER BY updated DESC"
     
     url = f"{BASE_URL}/rest/api/3/search/jql"
     payload = {
         "jql": jql,
-        "fields": ["summary", "status", "updated"],
-        "maxResults": 5
+        "fields": ["summary", "status", "updated", "created"],
+        "maxResults": 100
     }
     
     print(f"Querying Jira (POST): {url}")
@@ -46,8 +46,10 @@ async def check_jira_updates():
                 # Try to parse based on inspection
                 if 'issues' in data:
                     print(f"Found {len(data['issues'])} issues.")
-                    for issue in data['issues']:
-                        print(f"- {issue['key']}: {issue['fields']['summary']} (Status: {issue['fields']['status']['name']})")
+                    for issue in data['issues'][:5]:
+                        status = issue['fields']['status']['name']
+                        created = issue['fields']['created']
+                        print(f"- {issue['key']} Created: {created} Status: {status}")
             else:
                 print(f"Error: {response.text}")
     except Exception as e:
