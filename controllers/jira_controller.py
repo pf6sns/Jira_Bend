@@ -1,7 +1,7 @@
 from services import jira_service
 
-PROJECT_KEY = "MA"
-PROJECT_ID = "10002"
+PROJECT_KEY = "MBA"
+PROJECT_ID = "10000"
 
 async def create_and_assign_issue(issue):
     issue_data = {

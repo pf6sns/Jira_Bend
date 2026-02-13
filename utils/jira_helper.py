@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-BASE_URL = "https://abithan.atlassian.net"
+BASE_URL = "https://flowstream.atlassian.net"
 JIRA_EMAIL = os.getenv("JIRA_EMAIL", "").strip()
 JIRA_API_TOKEN = os.getenv("JIRA_API_TOKEN", "").strip()
 
